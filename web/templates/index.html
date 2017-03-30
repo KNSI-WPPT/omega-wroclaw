@@ -1,0 +1,24 @@
+{% extends "layout.html" %}
+{% block head %}
+    {{ super() }}
+    <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+{% endblock %}
+{% block content %}
+
+
+    <script>
+
+        //Put your d3js's code here
+
+        var ratData = [400, 900, 300, 600];
+
+        var svg = d3.select("body")
+                .append("svg")
+                .attr("width", 500)
+                .attr("height", 150);
+
+{#        svg.selectAll( "rect" )#}
+{#                .data(ratData)#}
+{#                .enter()#}
+    </script>
+{% endblock %}
