@@ -1,106 +1,62 @@
-# Data Formats
-Data gathered from different endpoints has to be somehow unified for further use.
-
-## UDFormat - Unified Data Format
-Data format unified after crawling data from source.
-Unification should clarify access interface to data.
-Json format with fixed properties.
-
-```javascript
-{
-    timestamp: number,
-    data_type: string,
-    data_group: string,
-    data: [object]
-}
-```
-
-## [`MPK/positions`](http://pasazer.mpk.wroc.pl/jak-jezdzimy/mapa-pozycji-pojazdow)
-### Example Request
-**Input:**
-```
-POST http://pasazer.mpk.wroc.pl/position.php`
-Form Data:
-busList[bus][]:d
-busList[bus][]:k
-```
-
-**Output:**
-```javascript
-[{"name":"d","type":"bus","y":16.969368,"x":51.06806,"k":9428173},{"name":"k","type":"bus","y":17.03524,"x":51.099575,"k":9429405},{"name":"k","type":"bus","y":17.026419,"x":51.141346,"k":9429438},{"name":"d","type":"bus","y":17.133308,"x":51.159653,"k":9428205},{"name":"k","type":"bus","y":17.04286,"x":51.148205,"k":9429422},{"name":"k","type":"bus","y":17.046026,"x":51.077015,"k":9429388},{"name":"d","type":"bus","y":16.984161,"x":51.063988,"k":9428252},{"name":"d","type":"bus","y":17.11131,"x":51.14576,"k":9428281},{"name":"d","type":"bus","y":17.01257,"x":51.08704,"k":9428266},{"name":"d","type":"bus","y":17.028986,"x":51.100895,"k":9428227},{"name":"d","type":"bus","y":17.077965,"x":51.12166,"k":9427681},{"name":"d","type":"bus","y":16.998318,"x":51.078175,"k":9428239},{"name":"d","type":"bus","y":17.060501,"x":51.111664,"k":9428189}]
-```
-
-### UDFormat
-#### `position.json`
-```javascript
-{
-    timestamp: number,
-    data_type: "positions",
-    data_group: "mpk/positions",
-    data: [Vehicle]
-}
-
-Vehicle
-{
-    name: string,  # Line
-    type: string,  # "bus" or "tram"
-    y: number      # GPS position
-    x: number      # GPS position
-    k: number      # Unique course number
-}
-```
-
-## [`MPK/timetables`](http://www.wroclaw.pl/open-data/index.php/zbiory-danych/17-transport/106-rozklad-jazdy-transportu-publicznego)
-### Example Request
-**Input:**
+# [`mpk/timetables`](http://www.wroclaw.pl/open-data/index.php/zbiory-danych/17-transport/106-rozklad-jazdy-transportu-publicznego)
+## Sample
+**Request**
 ```
 GET http://www.wroclaw.pl/open-data/opendata/rozklady/OtwartyWroclaw_rozklad_jazdy_GTFS.zip
 ```
 
-**Output:**
+**Response**
 ```
 Zip archive
 ```
 
-### UDFormat
-#### `agency.json`
+## Unified Data Format
+### `agency.json`
 ```javascript
 {
-    timestamp: number,
-    data_type: "agency",
-    data_group: "mpk/timetables",
-    data: [Agency]
+    "timestamp": number,
+    "data_type": "agency",
+    "data_group": "mpk/timetables",
+    "data": [Agency]
 }
 
 Agency
 {
-    agency_id: number
-    agency_name: string
-    agency_url: string
-    agency_timezone: string
-    agency_phone: string
-    agency_lang: string
+    "agency_id": number
+    "name": string
+    "url": string
+    "timezone": string
+    "phone": string
+    "language": string
 }
 ```
+- `agency_id` - Unique id of agency.
+- `name` - `agency_name` in raw data.
+- `url` - `agency_url` in raw data.
+- `timezone` - `agency_timezone` in raw data.
+- `phone` - `agency_phone` in raw data.
+- `language` - `agency_lang` in raw data.
 
-#### `calendar_dates.json`
+
+### `calendar_dates.json`
 ```javascript
 {
-    timestamp: number,
-    data_type: "calendar_dates",
-    data_group: "mpk/timetables",
-    data: [CalendarDate]
+    "timestamp": number,
+    "data_type": "calendar_dates",
+    "data_group": "mpk/timetables",
+    "data": [CalendarDate]
 }
 
 CalendarDate
 {
-    service_id: number,
-    date: number,
-    exception_type: number
+    "service_id": number,
+    "date": Date,
+    "exception_type": number
 }
 ```
+`// TODO`
 
-#### `calendar.json`
+### `calendar.json`
 ```javascript
 {
     timestamp: number,
@@ -123,8 +79,9 @@ Calendar
     end_date: number
 }
 ```
+`// TODO`
 
-#### `control_stops.json`
+### `control_stops.json`
 ```javascript
 {
     timestamp: number,
@@ -159,7 +116,7 @@ FeedInfo
 }
 ```
 
-#### `route_types.json`
+### `route_types.json`
 ```javascript
 {
     timestamp: number,
@@ -175,7 +132,7 @@ RouteType
 }
 ```
 
-#### `routes.json`
+### `routes.json`
 ```javascript
 {
     timestamp: number,
@@ -198,7 +155,7 @@ Route
 }
 ```
 
-#### `stop_times.json`
+### `stop_times.json`
 ```javascript
 {
     timestamp: number,
@@ -219,7 +176,7 @@ StopTime
 }
 ```
 
-#### `stops.json`
+### `stops.json`
 ```javascript
 {
     timestamp: number,
@@ -238,7 +195,7 @@ Stop
 }
 ```
 
-#### `trips.json`
+### `trips.json`
 ```javascript
 {
     timestamp: number,
@@ -260,7 +217,7 @@ Trip
 }
 ```
 
-#### `variants.json`
+### `variants.json`
 ```javascript
 {
     timestamp: number,
@@ -279,7 +236,7 @@ Variant
 }
 ```
 
-#### `vehicle_types.json`
+### `vehicle_types.json`
 ```javascript
 {
     timestamp: number,
