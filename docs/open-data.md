@@ -1,5 +1,22 @@
 # Open Data
 
+## Gathered Data
+
+Stops:
+- `name`
+- `coordinates`
+- `type`
+
+Vehicles:
+- `name`
+- `type`
+- `coordinates`
+- `course`
+- `current_direction`
+
+Routes:
+-
+
 ## Endpoints
  - [`mpk/positions`](http://mpk.wroc.pl/jak-jezdzimy/mapa-pozycji-pojazdow)
  - [`wroclaw/open-data`](http://www.wroclaw.pl/open-data/)
