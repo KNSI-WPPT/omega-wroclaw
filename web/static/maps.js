@@ -1,5 +1,5 @@
 var map;
-
+var markers = [];
 var wroclawCoords = new google.maps.LatLng(51.110679, 17.036151);
 
 function initialize() {
@@ -16,14 +16,15 @@ function initialize() {
 $(document).ready(function () {
     initialize();
 
-    jQuery("#map_button").click(function () {
-        // new google.maps.Marker({
-        //     position: new google.maps.LatLng(51.14058982 ,16.95920382),
-        //     map: map
-        // });
+    jQuery("#stops_button").click(function () {
         getStops();
     });
 
+
+    jQuery("#hide_stops_button").click(function () {
+        clearMarkers();
+        markers = [];
+    });
     function getStops() {
         $.ajax({
             url: "/stops",
@@ -43,12 +44,35 @@ $(document).ready(function () {
             stopsPositions[i][1] = stopsPositions[i][1].replace(",", ".");
 
 
-            new google.maps.Marker({
+            var marker = new google.maps.Marker({
                 position: new google.maps.LatLng(stopsPositions[i][1], stopsPositions[i][0]),
                 map: map
             })
+            markers.push(marker);
         }
     }
 
 
 });
+
+  function setMapOnAll(map) {
+        for (var i = 0; i < markers.length; i++) {
+          markers[i].setMap(map);
+        }
+      }
+
+      // Removes the markers from the map, but keeps them in the array.
+      function clearMarkers() {
+        setMapOnAll(null);
+      }
+
+      // Shows any markers currently in the array.
+      function showMarkers() {
+        setMapOnAll(map);
+      }
+
+      // Deletes all markers in the array by removing references to them.
+      function deleteMarkers() {
+        clearMarkers();
+        markers = [];
+      }

@@ -17,8 +17,19 @@
 
 {% endblock %}
 {% block content %}
-    <div id="map_canvas" style="width:100%; height:100%"></div>
-    <div id="map_button">Show busStops</div>
+    <div id="map_canvas"></div>
+    <div id="debug_panel">
+        <div id="debug_panel_content">
+            <div id="debug_panel_header">
+                KNSI Omega
+            </div>
+            <div id="debug_panel_subheader">
+                This is debug panel
+            </div>
+            <button class="button" id="stops_button">Show Bus Stops</button>
+            <button class="button" id="hide_stops_button">Hide Bus Stops</button>
+        </div>
+    </div>
 {% endblock %}
 {% block postbody %}
 {% endblock %}

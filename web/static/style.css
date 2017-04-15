@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css?family=Open+Sans|Overpass+Mono');
+
 html {
     height: 100%;
     overflow: hidden;
@@ -10,20 +12,60 @@ body {
 }
 
 #map_canvas {
-    height: 100%
+    height: 100%;
+    width: 80%
 }
 
 #map_button {
-    position: absolute;
-    left: 10px;
-    top: 10px;
-    width: 100px;
-    height: 30px;
-    background-color: red;
-    z-index: 1000;
-
+    margin-top: 40px;
+    border-radius: 5px;
+    background-color: azure;
+    padding: 10px;
 }
 
 #map_button:hover {
     cursor: pointer;
+    background-color: rebeccapurple;
 }
+
+#debug_panel {
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 100%;
+    width: 20%;
+    text-align: center;
+    font-family: 'Overpass Mono', monospace;
+}
+
+#debug_panel_header {
+    font-size: 40px;
+    color: blueviolet;
+}
+
+#debug_panel_subheader {
+    margin-bottom: 100px;
+}
+
+#debug_panel_content {
+    margin: 20px;
+}
+
+.button {
+    font-family: 'Overpass Mono', monospace;
+    border: none;
+    background-color: aquamarine;
+    width: 150px;
+    height: 40px;
+    cursor: pointer;
+    outline: none;
+    margin-bottom: 40px;
+}
+
+.button:hover {
+    -webkit-box-shadow: 3px 3px 25px -5px rgba(0, 0, 0, 0.3);
+    -moz-box-shadow: 3px 3px 25px -5px rgba(0, 0, 0, 0.3);
+    box-shadow: 3px 3px 25px -5px rgba(0, 0, 0, 0.3);
+    text-shadow: aquamarine;
+}
+
