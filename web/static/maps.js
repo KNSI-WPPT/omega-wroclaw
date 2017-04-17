@@ -1,5 +1,6 @@
 var map;
 var markers = [];
+var infoWindows = [];
 var wroclawCoords = new google.maps.LatLng(51.110679, 17.036151);
 
 function initialize() {
@@ -44,11 +45,32 @@ $(document).ready(function () {
             stopsPositions[i][1] = stopsPositions[i][1].replace(",", ".");
 
 
+            // this could be moved outside the loop
+            var pinColor = i%2 ? 'blu-circle.png' : 'red-circle.png';
+            var pinIcon = new google.maps.MarkerImage(
+                "https://maps.google.com/mapfiles/kml/paddle/" + pinColor,
+                null, /* size is determined at runtime */
+                null, /* origin is 0,0 */
+                null, /* anchor is bottom center of the scaled image */
+                new google.maps.Size(20, 20)
+            );
+            // or https://chart.googleapis.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2%7C870f57
+            // for custom symbols and RGB colors
+
             var marker = new google.maps.Marker({
                 position: new google.maps.LatLng(stopsPositions[i][1], stopsPositions[i][0]),
-                map: map
-            })
+                map: map,
+                icon: pinIcon
+            });
+            marker.content = 'Stop: ' + stopsPositions[i][0] + ' ' + stopsPositions[i][1];
             markers.push(marker);
+
+            var infoWindow = new google.maps.InfoWindow();
+
+            markers[i].addListener('click', function() {
+                infoWindow.setContent(this.content);
+                infoWindow.open(map, this);
+            });
         }
     }
 
