@@ -3,32 +3,29 @@
     {{ super() }}
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no"/>
     <meta name="apple-mobile-web-app-capable" content="yes"/>
-
-    <script type="text/javascript"
-            src="http://maps.google.com/maps/api/js?sensor=true">
-    </script>
-
     <script
             src="https://code.jquery.com/jquery-3.2.1.min.js"
             integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
             crossorigin="anonymous"></script>
-
+    <script type="text/javascript"
+            src="http://maps.google.com/maps/api/js?sensor=true">
+    </script>
     <script type="text/javascript" src="{{ url_for('static', filename='maps.js') }}"></script>
 
 {% endblock %}
 {% block content %}
+
     <div id="map_canvas"></div>
     <div id="debug_panel">
-        <div id="debug_panel_content">
-            <div id="debug_panel_header">
-                KNSI Omega
-            </div>
-            <div id="debug_panel_subheader">
-                This is debug panel
-            </div>
-            <button class="button" id="stops_button">Show Bus Stops</button>
-            <button class="button" id="hide_stops_button">Hide Bus Stops</button>
+    <div id="debug_panel_content">
+        <div id="debug_panel_header">
+            KNSI Omega
         </div>
+        <div id="debug_panel_subheader">
+            This is debug panel
+        </div>
+        <button class="button" id="stops_button">Show Bus Stops</button>
+        <button class="button" id="hide_stops_button">Hide Bus Stops</button>
     </div>
 {% endblock %}
 {% block postbody %}

@@ -47,7 +47,7 @@ $(document).ready(function () {
             var marker = new google.maps.Marker({
                 position: new google.maps.LatLng(stopsPositions[i][1], stopsPositions[i][0]),
                 map: map
-            })
+            });
             markers.push(marker);
         }
     }

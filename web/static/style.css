@@ -11,6 +11,10 @@ body {
     padding: 0px
 }
 
+#panel {
+    width: 100%;
+}
+
 #map_canvas {
     height: 100%;
     width: 80%
