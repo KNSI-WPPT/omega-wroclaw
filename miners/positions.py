@@ -12,8 +12,8 @@ class Position(Base):
 
     id = Column(Integer, primary_key=True, nullable=False)
     datetime = Column(DateTime)
-    name = Column(String)  # Primary Key?
-    type = Column(String)
+    name = Column(String(32))  # Primary Key?
+    type = Column(String(32))
     x = Column(Float)
     y = Column(Float)
     k = Column(Float)
@@ -51,5 +51,6 @@ def fetch_data(buses, trams):
 
 # TODO Nice daemon process with error handling
 while True:
+    print("Crawling...\r");
     fetch_data(buses, trams)
     time.sleep(10)
