@@ -28,7 +28,7 @@ $(document).ready(function () {
     });
     function getStops() {
         $.ajax({
-            url: "/stops",
+            url: "/resources/stops.txt",
             async: true,
             success: function (data) {
                 parseStops(data);
@@ -44,11 +44,22 @@ $(document).ready(function () {
             stopsPositions[i][0] = stopsPositions[i][0].replace(",", ".");
             stopsPositions[i][1] = stopsPositions[i][1].replace(",", ".");
 
+            var stopType = stopsPositions[i][3];
+            var pinType;
+            console.log(stopType);
+            if (stopType.length === 3) {
+                pinType = 'mixed-circle.png';
+            } else {
+                if (parseInt(stopType) === 0) {
+                    pinType = 'red-circle.png';
+                } else {
+                    pinType = 'blu-circle.png';
+                }
+            }
 
             // this could be moved outside the loop
-            var pinColor = i%2 ? 'blu-circle.png' : 'red-circle.png';
             var pinIcon = new google.maps.MarkerImage(
-                "https://maps.google.com/mapfiles/kml/paddle/" + pinColor,
+                "http://localhost:5000/resources/" + pinType,
                 null, /* size is determined at runtime */
                 null, /* origin is 0,0 */
                 null, /* anchor is bottom center of the scaled image */
@@ -67,7 +78,7 @@ $(document).ready(function () {
 
             var infoWindow = new google.maps.InfoWindow();
 
-            markers[i].addListener('click', function() {
+            markers[i].addListener('click', function () {
                 infoWindow.setContent(this.content);
                 infoWindow.open(map, this);
             });
@@ -77,24 +88,24 @@ $(document).ready(function () {
 
 });
 
-  function setMapOnAll(map) {
-        for (var i = 0; i < markers.length; i++) {
-          markers[i].setMap(map);
-        }
-      }
+function setMapOnAll(map) {
+    for (var i = 0; i < markers.length; i++) {
+        markers[i].setMap(map);
+    }
+}
 
-      // Removes the markers from the map, but keeps them in the array.
-      function clearMarkers() {
-        setMapOnAll(null);
-      }
+// Removes the markers from the map, but keeps them in the array.
+function clearMarkers() {
+    setMapOnAll(null);
+}
 
-      // Shows any markers currently in the array.
-      function showMarkers() {
-        setMapOnAll(map);
-      }
+// Shows any markers currently in the array.
+function showMarkers() {
+    setMapOnAll(map);
+}
 
-      // Deletes all markers in the array by removing references to them.
-      function deleteMarkers() {
-        clearMarkers();
-        markers = [];
-      }
+// Deletes all markers in the array by removing references to them.
+function deleteMarkers() {
+    clearMarkers();
+    markers = [];
+}
