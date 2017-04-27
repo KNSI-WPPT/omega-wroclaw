@@ -20,6 +20,7 @@ class Position(DB.Base):
 
 
 DB.Base.metadata.create_all(DB.engine)
+connection = DB.engine.connect()
 
 # TODO Fetch bus & tram lines from DB
 buses = [
@@ -49,7 +50,7 @@ def fetch_data(buses, trams):
     for j in r.json():
         j['datetime'] = now
         positions.append(j)
-    DB.engine.execute(
+    connection.execute(
         Position.__table__.insert(),
         positions
     )
