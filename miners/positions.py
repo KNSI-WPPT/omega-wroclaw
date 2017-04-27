@@ -4,10 +4,10 @@ import datetime
 
 from sqlalchemy import Column, Integer, String, DateTime, Float
 
-from database import Base, engine, Session
+from configuration import DB
 
 
-class Position(Base):
+class Position(DB.Base):
     __tablename__ = "vehicle_positions"
 
     id = Column(Integer, primary_key=True, nullable=False)
@@ -19,8 +19,8 @@ class Position(Base):
     k = Column(Float)
 
 
-Base.metadata.create_all(engine)
-session = Session()
+DB.Base.metadata.create_all(DB.engine)
+session = DB.Session()
 
 # TODO Fetch bus & tram lines from DB
 buses = [
@@ -36,21 +36,25 @@ trams = [
 
 
 def fetch_data(buses, trams):
+    print("Fetching data...\r")
     r = requests.post(
         'http://mpk.wroc.pl/position.php',
         data={"busList[bus][]": buses, "busList[tram][]": trams},
         headers={'Content-Type': 'application/x-www-form-urlencoded'}
     )
 
+    print("Adding...\r")
     now = datetime.datetime.now()
     session.add_all([
         Position(datetime=now, **j)
         for j in r.json()
     ])
+    print("Committing...\r")
     session.commit()
 
 # TODO Nice daemon process with error handling
 while True:
-    print("Crawling...\r");
+    print("Crawling...\r")
     fetch_data(buses, trams)
+    print("Sleeping...\r")
     time.sleep(10)
