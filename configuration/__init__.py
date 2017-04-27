@@ -31,4 +31,3 @@ class DB:
         url=config.get('Database', 'url'),
         db=config.get('Database', 'database')
     ))
-    Session = sessionmaker(engine)

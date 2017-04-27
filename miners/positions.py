@@ -20,7 +20,6 @@ class Position(DB.Base):
 
 
 DB.Base.metadata.create_all(DB.engine)
-session = DB.Session()
 
 # TODO Fetch bus & tram lines from DB
 buses = [
@@ -45,12 +44,17 @@ def fetch_data(buses, trams):
 
     print("Adding...\r")
     now = datetime.datetime.now()
-    session.add_all([
-        Position(datetime=now, **j)
-        for j in r.json()
-    ])
-    print("Committing...\r")
-    session.commit()
+    t0 = time.time()
+    positions = []
+    for j in r.json():
+        j['datetime'] = now
+        positions.append(j)
+    DB.engine.execute(
+        Position.__table__.insert(),
+        positions
+    )
+    print("Added in " + str(time.time() - t0) + "secs")
+
 
 # TODO Nice daemon process with error handling
 while True:
