@@ -102,3 +102,7 @@ ENV/
 
 # configuration files
 *.ini
+
+# databases
+*.db
+

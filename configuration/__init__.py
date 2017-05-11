@@ -21,13 +21,15 @@ config = ConfigParser()
 config.read(args.config_file)
 print(config.sections())
 
+print([(a, b) for a, b in config["SQLite"].items()])
 
 class DB:
     Base = declarative_base()
-    engine = create_engine("{conn}://{user}:{pwd}@{url}/{db}".format(
-        conn=config.get('Database', 'connection'),
-        user=config.get('Database', 'login'),
-        pwd=config.get('Database', 'password'),
-        url=config.get('Database', 'url'),
-        db=config.get('Database', 'database')
-    ))
+    engine = create_engine(
+        {
+            "sqlite": "sqlite:///{path}",
+            "mysql": "{conn}://{user}:{pwd}@{url}/{db}"
+        }[config.sections()[0].tolower()].format(
+            **config[config.sections()[0]]
+        )
+    )
