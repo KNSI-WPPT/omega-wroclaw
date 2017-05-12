@@ -1,26 +1,11 @@
-import requests
 import time
 import datetime
 
-from sqlalchemy import Column, Integer, String, DateTime, Float
+import requests
 
-from configuration import DB
+from database import DB
+from database.positions import Position
 
-
-class Position(DB.Base):
-    __tablename__ = "vehicle_positions"
-
-    id = Column(Integer, primary_key=True, nullable=False)
-    datetime = Column(DateTime)
-    name = Column(String(32))  # Primary Key?
-    type = Column(String(32))
-    x = Column(Float)
-    y = Column(Float)
-    k = Column(Float)
-
-
-DB.Base.metadata.create_all(DB.engine)
-connection = DB.engine.connect()
 
 # TODO Fetch bus & tram lines from DB
 buses = [
@@ -36,30 +21,28 @@ trams = [
 
 
 def fetch_data(buses, trams):
-    print("Fetching data...\r")
     r = requests.post(
         'http://mpk.wroc.pl/position.php',
         data={"busList[bus][]": buses, "busList[tram][]": trams},
         headers={'Content-Type': 'application/x-www-form-urlencoded'}
     )
+    return r.json()
 
-    print("Adding...\r")
+
+def insert_data(positions):
     now = datetime.datetime.now()
-    t0 = time.time()
-    positions = []
-    for j in r.json():
-        j['datetime'] = now
-        positions.append(j)
+    for p in positions:
+        p['datetime'] = now
+
     connection.execute(
         Position.__table__.insert(),
         positions
     )
-    print("Added in " + str(time.time() - t0) + "secs")
 
 
-# TODO Nice daemon process with error handling
+DB.Base.metadata.create_all(DB.engine)
+connection = DB.engine.connect()
+
 while True:
-    print("Crawling...\r")
-    fetch_data(buses, trams)
-    print("Sleeping...\r")
+    insert_data(fetch_data(buses, trams))
     time.sleep(10)
