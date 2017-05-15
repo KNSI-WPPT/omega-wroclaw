@@ -27,8 +27,8 @@ def get_stops():
     stops = []
     for i in range(len(lines)):
         line = lines[i].split(";")
-        line_dict = {'lat' : float(line[0].replace(',', '.')), 'lgn': float(line[1].replace(',', '.')),
-                     'id': int(line[2]), 'type': 1 if line[3] == '3' else (0 if line[3] == '0' else 2)}
+        line_dict = {'lat' : float(line[1].replace(',', '.')), 'lng': float(line[0].replace(',', '.')),
+                     'id': int(line[2]), 'type': 1 if line[3].strip() == "3" else (0 if line[3].strip() == "0" else 2)}
         stops.append(line_dict)
     return jsonify({'stops': stops})
 
