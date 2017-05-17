@@ -28,33 +28,32 @@ $(document).ready(function () {
     });
     function getStops() {
         $.ajax({
-            url: "/resources/stops.txt",
+            type: 'GET',
+            url: '/resources/stops',
             async: true,
-            success: function (data) {
-                parseStops(data);
+            dataType: 'json',
+            success: function (response) {
+                parseStops(response);
             }
         });
     }
 
     function parseStops(data) {
-        var stopsPositions = data.split("\n");
+        var stops = data.stops;
+        for (var i = 0; i < stops.length; i++) {
 
-        for (var i = 0; i < stopsPositions.length; i++) {
-            stopsPositions[i] = stopsPositions[i].split(';');
-            stopsPositions[i][0] = stopsPositions[i][0].replace(",", ".");
-            stopsPositions[i][1] = stopsPositions[i][1].replace(",", ".");
-
-            var stopType = stopsPositions[i][3];
+            var stopType =  stops[i].type;
+            var stopId = stops[i].id;
+            var stopLat = stops[i].lat;
+            var stopLng = stops[i].lng;
+            
             var pinType;
-            console.log(stopType);
-            if (stopType.length === 3) {
+            if (stopType === 2) {
                 pinType = 'mixed-circle.png';
+            } else if (stopType === 1) {
+                pinType = 'red-circle.png';
             } else {
-                if (parseInt(stopType) === 0) {
-                    pinType = 'red-circle.png';
-                } else {
-                    pinType = 'blu-circle.png';
-                }
+                pinType = 'blu-circle.png';
             }
 
             // this could be moved outside the loop
@@ -69,11 +68,11 @@ $(document).ready(function () {
             // for custom symbols and RGB colors
 
             var marker = new google.maps.Marker({
-                position: new google.maps.LatLng(stopsPositions[i][1], stopsPositions[i][0]),
+                position: new google.maps.LatLng(stopLat, stopLng),
                 map: map,
                 icon: pinIcon
             });
-            marker.content = 'Stop: ' + stopsPositions[i][0] + ' ' + stopsPositions[i][1];
+            marker.content = 'Stop: ' + stopId;
             markers.push(marker);
 
             var infoWindow = new google.maps.InfoWindow();
@@ -84,8 +83,6 @@ $(document).ready(function () {
             });
         }
     }
-
-
 });
 
 function setMapOnAll(map) {
