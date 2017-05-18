@@ -42,11 +42,11 @@ $(document).ready(function () {
         var stops = data.stops;
         for (var i = 0; i < stops.length; i++) {
 
-            var stopType =  stops[i].type;
+            var stopType = stops[i].type;
             var stopId = stops[i].id;
             var stopLat = stops[i].lat;
             var stopLng = stops[i].lng;
-            
+
             var pinType;
             if (stopType === 2) {
                 pinType = 'mixed-circle.png';
@@ -106,3 +106,12 @@ function deleteMarkers() {
     clearMarkers();
     markers = [];
 }
+
+// Page style functions
+
+
+$("#mobile-button").on("click", function () {
+    $("#debug_panel").toggle()
+    $("#mobile-button-lines").toggle()
+    $("#mobile-button-close-panel").toggle()
+})

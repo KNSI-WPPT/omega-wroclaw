@@ -27,7 +27,7 @@ class User(db.Model):
 
 
 # TODO: connection between database file and SQLAlchemy
-db.create_all()
+# db.create_all()
 
 
 @app.route('/')

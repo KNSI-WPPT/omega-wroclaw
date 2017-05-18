@@ -7,8 +7,8 @@ html {
 
 body {
     height: 100%;
-    margin: 0px;
-    padding: 0px
+    margin: 0;
+    padding: 0;
 }
 
 #panel {
@@ -17,42 +17,56 @@ body {
 
 #map_canvas {
     height: 100%;
-    width: 80%
+    width: 100%
 }
 
-#map_button {
-    margin-top: 40px;
-    border-radius: 5px;
-    background-color: azure;
-    padding: 10px;
-}
-
-#map_button:hover {
-    cursor: pointer;
-    background-color: rebeccapurple;
-}
-
-#debug_panel {
+#mobile-button {
+    height: 65px;
+    width: 65px;
+    background-color: rgba(255, 255, 255, 0.9);
+    -ms-transform: rotate(45deg); /* IE 9 */
+    -webkit-transform: rotate(45deg); /* Chrome, Safari, Opera */
+    border-radius: 50%;
     position: absolute;
-    right: 0;
-    top: 0;
-    height: 100%;
-    width: 20%;
-    text-align: center;
+    left: 50%;
+    transform: translate(-50%, 0);
+    bottom: 20px;
+    z-index: 999;
+    -webkit-box-shadow: 3px 3px 25px -5px rgba(0, 0, 0, 0.3);
+    -moz-box-shadow: 3px 3px 25px -5px rgba(0, 0, 0, 0.3);
+    box-shadow: 3px 3px 25px -5px rgba(0, 0, 0, 0.3);
+    text-shadow: aquamarine;
+
+}
+
+#mobile-button-lines {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.mobile-button-line {
+    height: 2px;
+    width: 35px;
+    border-radius: 3px;
+    background-color: grey;
+    margin: 6px auto;
+}
+
+#mobile-button-close-panel {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: none;
+}
+
+#mobile-button-close-panel span {
     font-family: 'Overpass Mono', monospace;
-}
-
-#debug_panel_header {
-    font-size: 40px;
-    color: blueviolet;
-}
-
-#debug_panel_subheader {
-    margin-bottom: 100px;
-}
-
-#debug_panel_content {
-    margin: 20px;
+    font-size: 50px;
+    color: grey;
+    text-transform: lowercase;
 }
 
 .button {
@@ -73,3 +87,58 @@ body {
     text-shadow: aquamarine;
 }
 
+#debug_panel {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    background-color: white;
+    text-align: center;
+    font-family: 'Overpass Mono', monospace;
+    display: none;
+
+}
+
+#debug_panel_header {
+    font-size: 40px;
+    color: blueviolet;
+}
+
+#debug_panel_subheader {
+    margin-bottom: 100px;
+}
+
+#debug_panel_content {
+    margin: 20px;
+}
+
+@media only screen and (min-width: 768px) {
+
+    #mobile-button {
+        display: none;
+    }
+
+    #map_canvas {
+        width: 80%
+    }
+
+    #map_button {
+        margin-top: 40px;
+        border-radius: 5px;
+        background-color: azure;
+        padding: 10px;
+    }
+
+    #map_button:hover {
+        cursor: pointer;
+        background-color: rebeccapurple;
+    }
+
+    #debug_panel {
+        width: 20%;
+        display: inline;
+
+    }
+
+}
