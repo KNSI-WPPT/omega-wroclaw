@@ -29,7 +29,7 @@ def fetch_data():
         })
 
     connection.execute(
-        StopLocation.__table__.insert(),
+        StopLocation.__table__.insert().prefix_with("OR REPLACE"),
         positions
     )
 
