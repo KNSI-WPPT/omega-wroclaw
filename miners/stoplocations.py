@@ -37,5 +37,5 @@ connection = DB.engine.connect()
 
 if __name__ == "__main__":
     while True:
-        threading.Timer(60 * 60 * 24, fetch_data).start()
+        fetch_data()
         time.sleep(60 * 60 * 24)
