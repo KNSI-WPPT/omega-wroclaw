@@ -4,7 +4,7 @@ from database import DB
 
 
 class StopLocation(DB.Base):
-    __tablename__ = "vehicle_positions"
+    __tablename__ = "stop_positions"
 
     lat = Column(Float)
     lon = Column(Float)
