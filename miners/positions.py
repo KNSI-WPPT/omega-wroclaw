@@ -1,7 +1,8 @@
 import time
 import datetime
-
+import pytz
 import requests
+import threading
 
 from database import DB
 from database.positions import Position
@@ -21,16 +22,15 @@ trams = [
 
 
 def fetch_data(buses, trams):
+    now = datetime.datetime.now(pytz.timezone('Europe/Warsaw'))
+
     r = requests.post(
         'http://mpk.wroc.pl/position.php',
         data={"busList[bus][]": buses, "busList[tram][]": trams},
         headers={'Content-Type': 'application/x-www-form-urlencoded'}
     )
-    return r.json()
 
-
-def insert_data(positions):
-    now = datetime.datetime.now()
+    positions = r.json()
     for p in positions:
         p['datetime'] = now
 
@@ -43,6 +43,8 @@ def insert_data(positions):
 DB.Base.metadata.create_all(DB.engine)
 connection = DB.engine.connect()
 
-while True:
-    insert_data(fetch_data(buses, trams))
-    time.sleep(10)
+if __name__ == "__main__":
+    while True:
+        threading.Timer(10, fetch_data, args=[buses, trams]).start()
+        time.sleep(10)
+
