@@ -1,4 +1,5 @@
 import time
+import threading
 
 import requests
 
@@ -33,6 +34,8 @@ def fetch_data():
 DB.Base.metadata.create_all(DB.engine)
 connection = DB.engine.connect()
 
-while True:
-    fetch_data()
-    time.sleep(60 * 60 * 24)
+
+if __name__ == "__main__":
+    while True:
+        threading.Timer(60 * 60 * 24, fetch_data).start()
+        time.sleep(60 * 60 * 24)

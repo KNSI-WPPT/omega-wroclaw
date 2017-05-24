@@ -1,2 +1,4 @@
+pytz
+pymysql
 requests==2.12.3
 SQLAlchemy==1.1.9
