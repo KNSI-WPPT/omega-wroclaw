@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, DateTime, Float
+from sqlalchemy import Column, Integer, String,  Float
 
 from database import DB
 
@@ -9,4 +9,4 @@ class StopLocation(DB.Base):
     lat = Column(Float)
     lon = Column(Float)
     stop_id = Column(Integer, primary_key=True)
-    stop_type = Column(Integer)
+    stop_type = Column(String(4))

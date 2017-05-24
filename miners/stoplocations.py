@@ -21,11 +21,7 @@ def fetch_data():
             "lon": float(lon.replace(",", ".")),
             "lat": float(lat.replace(",", ".")),
             "stop_id": int(stop_id),
-            "stop_type": {
-                "0": 1,
-                "3": 2,
-                "03": 3
-            }[stop_type]
+            "stop_type": stop_type
         })
 
     connection.execute(
@@ -39,4 +35,4 @@ connection = DB.engine.connect()
 
 while True:
     fetch_data()
-    time.sleep(10)
+    time.sleep(60 * 60 * 24)
