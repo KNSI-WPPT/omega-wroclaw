@@ -34,6 +34,9 @@ $(document).ready(function () {
             dataType: 'json',
             success: function (response) {
                 parseStops(response);
+            },
+            error: function () {
+                alert("There was an error while fetching bus positions");
             }
         });
     }
