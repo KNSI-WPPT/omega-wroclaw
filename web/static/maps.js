@@ -1,7 +1,11 @@
 var map;
 var markers = [];
-var infoWindows = [];
 var wroclawCoords = new google.maps.LatLng(51.110679, 17.036151);
+var busToDisplay = ["100","103"];
+var LastBusData = [];
+var CurrentBusData = [];
+var socket = io('http://localhost:5000');
+var busPositions = [];
 
 function initialize() {
     var mapOptions = {
@@ -13,7 +17,6 @@ function initialize() {
     map.setMapTypeId(google.maps.MapTypeId.ROADMAP);
 }
 
-
 $(document).ready(function () {
     initialize();
 
@@ -21,11 +24,38 @@ $(document).ready(function () {
         getStops();
     });
 
-
     jQuery("#hide_stops_button").click(function () {
         clearMarkers();
         markers = [];
     });
+
+    jQuery("#100").click(function () {
+        if(busToDisplay.indexOf(this.id)===-1) {
+            busToDisplay.push(this.id);
+            displayBus();
+            console.log("bus number 100 added");
+        }
+        else {
+            console.log("bus number 100 removed");
+        }
+    });
+
+    jQuery("#103").click(function () {
+        if(busToDisplay.indexOf(this.id)===-1) {
+            busToDisplay.push(this.id);
+            displayBus();
+            console.log("bus number 103 added");
+        }
+        else {
+            console.log("bus number 103 removed");
+        }
+    });
+
+    jQuery("#display_buses_button").click(function () {
+        CalculateActualBusPositions();
+        deployBuses();
+    });
+
     function getStops() {
         $.ajax({
             type: 'GET',
@@ -85,6 +115,83 @@ $(document).ready(function () {
     }
 });
 
+
+socket.on('connect',function() {
+    console.log("polaczono");
+});
+
+socket.on('disconnect',function () {
+    console.log("disconect");
+});
+
+socket.on('serial data',function (data) {
+    JSONtoArray(data.bus_location_data);
+    //if(CurrentBusData.length !== 0 && LastBusData.length !== 0)
+
+});
+
+function JSONtoArray(data) {
+    CurrentBusData = LastBusData.slice(0);
+    LastBusData = [];
+    for(var i = 0;i<data.length;i++) {
+        LastBusData[i] = data[i];
+        console.log(LastBusData[i])
+    }
+}
+
+function CalculateActualBusPositions() {
+
+    var tmplong = 0;
+    var tmplat = 0;
+
+    for(var i = 0;i<LastBusData.length; i++){
+        busPositions[i] = [];
+        var k =0;
+        while(k <= 500){
+            tmplong = k*((LastBusData[i].longitude-CurrentBusData[i].longitude)/500)+parseFloat(CurrentBusData[i].longitude);
+            tmplat = k*((LastBusData[i].latitude-CurrentBusData[i].latitude)/500)+parseFloat(CurrentBusData[i].latitude);
+            busPositions[i].push({id:LastBusData[i].id,position:new google.maps.LatLng(tmplat,tmplong)});
+            k++;
+        }
+    }
+}
+
+function deployBuses() {
+    var pinIcon = new google.maps.MarkerImage(
+        "http://localhost:5000/resources/bus-circle.png",
+        null, /* size is determined at runtime */
+        null, /* origin is 0,0 */
+        null, /* anchor is bottom center of the scaled image */
+        new google.maps.Size(20, 20)
+    );
+    var markers = [];
+    for(var i = 0; i<busPositions.length;i++) {
+        markers.push(new google.maps.Marker({
+            position: busPositions[i][0].position,
+            map: map,
+            icon: pinIcon
+        }));
+    }
+
+    var n = 1;
+    var myInterval = setInterval(function () {
+        if(n>=50) {
+            breakInterval(myInterval);
+            for(var i = 0; i < markers.length; i++)
+                markers[i].setMap(null)
+            CalculateActualBusPositions();
+            deployBuses();
+        }
+        for(var i = 0; i<markers.length;i++)
+            markers[i].setPosition(busPositions[i][n].position)
+        n++;
+    },10)
+}
+
+function breakInterval(interval){
+    clearInterval(interval);
+}
+
 function setMapOnAll(map) {
     for (var i = 0; i < markers.length; i++) {
         markers[i].setMap(map);
@@ -108,8 +215,6 @@ function deleteMarkers() {
 }
 
 // Page style functions
-
-
 $("#mobile-button").on("click", function () {
     $("#debug_panel").toggle()
     $("#mobile-button-lines").toggle()
