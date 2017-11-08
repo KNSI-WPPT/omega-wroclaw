@@ -87,6 +87,24 @@ body {
     text-shadow: aquamarine;
 }
 
+.buttonBusNumber {
+    font-family: 'Overpass Mono', monospace;
+    border: none;
+    background-color: aquamarine;
+    width: 50px;
+    height: 40px;
+    cursor: pointer;
+    outline: none;
+    margin-bottom: 40px;
+}
+
+.buttonBusNumber:hover {
+    -webkit-box-shadow: 3px 3px 25px -5px rgba(0, 0, 0, 0.3);
+    -moz-box-shadow: 3px 3px 25px -5px rgba(0, 0, 0, 0.3);
+    box-shadow: 3px 3px 25px -5px rgba(0, 0, 0, 0.3);
+    text-shadow: aquamarine;
+}
+
 #debug_panel {
     position: absolute;
     top: 0;
