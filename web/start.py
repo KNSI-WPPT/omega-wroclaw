@@ -48,12 +48,12 @@ def background_thread():
         data = {"bus_location_data": [
 
             {
-                "id": "103",
+                "id": 103,
                 "longitude": round(long1,8),
                 "latitude": round(lat1,8)
             },
             {
-                "id": "100",
+                "id": 100,
                 "longitude": round(long2,8),
                 "latitude": round(lat2,8)
             }]
