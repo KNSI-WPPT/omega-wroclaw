@@ -1,12 +1,15 @@
 var map;
-var markers = [];
+var stopMarkers = [];
+var busMarkers = [];
 var wroclawCoords = new google.maps.LatLng(51.110679, 17.036151);
-var busToDisplay = ["100","103"];
+var busToDisplay = [100,103];
 var LastBusData = [];
 var CurrentBusData = [];
 var socket = io('http://localhost:5000');
-var busPositions = [];
-
+var counter=0;
+var myInterval;
+var hide = false;
+var start = false;
 function initialize() {
     var mapOptions = {
         zoom: 14,
@@ -26,34 +29,37 @@ $(document).ready(function () {
 
     jQuery("#hide_stops_button").click(function () {
         clearMarkers();
-        markers = [];
+        stopMarkers = [];
     });
 
     jQuery("#100").click(function () {
-        if(busToDisplay.indexOf(this.id)===-1) {
-            busToDisplay.push(this.id);
-            displayBus();
+        if(busToDisplay.indexOf(parseInt(this.id))===-1) {
+            busToDisplay.push(parseInt(this.id));
             console.log("bus number 100 added");
         }
         else {
             console.log("bus number 100 removed");
+            busToDisplay.splice(busToDisplay.indexOf(parseInt(this.id)),1);
         }
     });
 
     jQuery("#103").click(function () {
-        if(busToDisplay.indexOf(this.id)===-1) {
-            busToDisplay.push(this.id);
-            displayBus();
+        if(busToDisplay.indexOf(parseInt(this.id))===-1) {
+            busToDisplay.push(parseInt(this.id));
             console.log("bus number 103 added");
         }
         else {
             console.log("bus number 103 removed");
+            busToDisplay.splice(busToDisplay.indexOf(parseInt(this.id)),1);
         }
     });
 
     jQuery("#display_buses_button").click(function () {
-        CalculateActualBusPositions();
-        deployBuses();
+        hide = false;
+    });
+
+    jQuery("#hide_buses_button").click(function () {
+        hide = true;
     });
 
     function getStops() {
@@ -106,11 +112,11 @@ $(document).ready(function () {
                 icon: pinIcon
             });
             marker.content = 'Stop: ' + stopId;
-            markers.push(marker);
+            stopMarkers.push(marker);
 
             var infoWindow = new google.maps.InfoWindow();
 
-            markers[i].addListener('click', function () {
+            stopMarkers[i].addListener('click', function () {
                 infoWindow.setContent(this.content);
                 infoWindow.open(map, this);
             });
@@ -120,7 +126,7 @@ $(document).ready(function () {
 
 
 socket.on('connect',function() {
-    console.log("polaczono");
+    console.log("connect");
 });
 
 socket.on('disconnect',function () {
@@ -129,37 +135,24 @@ socket.on('disconnect',function () {
 
 socket.on('serial data',function (data) {
     JSONtoArray(data.bus_location_data);
-    //if(CurrentBusData.length !== 0 && LastBusData.length !== 0)
-
 });
 
 function JSONtoArray(data) {
+    counter=0;
     CurrentBusData = LastBusData.slice(0);
     LastBusData = [];
     for(var i = 0;i<data.length;i++) {
         LastBusData[i] = data[i];
-        console.log(LastBusData[i])
+    }
+    if(CurrentBusData.length !== 0 && LastBusData.length !== 0 && !start) {
+        init();
+        start=true;
     }
 }
 
-function CalculateActualBusPositions() {
+function init() {
 
-    var tmplong = 0;
-    var tmplat = 0;
-
-    for(var i = 0;i<LastBusData.length; i++){
-        busPositions[i] = [];
-        var k =0;
-        while(k <= 500){
-            tmplong = k*((LastBusData[i].longitude-CurrentBusData[i].longitude)/500)+parseFloat(CurrentBusData[i].longitude);
-            tmplat = k*((LastBusData[i].latitude-CurrentBusData[i].latitude)/500)+parseFloat(CurrentBusData[i].latitude);
-            busPositions[i].push({id:LastBusData[i].id,position:new google.maps.LatLng(tmplat,tmplong)});
-            k++;
-        }
-    }
-}
-
-function deployBuses() {
+    var infoWindow = new google.maps.InfoWindow();
     var pinIcon = new google.maps.MarkerImage(
         "http://localhost:5000/resources/bus-circle.png",
         null, /* size is determined at runtime */
@@ -167,59 +160,71 @@ function deployBuses() {
         null, /* anchor is bottom center of the scaled image */
         new google.maps.Size(20, 20)
     );
-    var markers = [];
-    for(var i = 0; i<busPositions.length;i++) {
-        markers.push(new google.maps.Marker({
-            position: busPositions[i][0].position,
+
+    for(var i = 0; i<LastBusData.length;i++) {
+        busMarkers.push(new google.maps.Marker({
+            position: new google.maps.LatLng(LastBusData[i].latitude,LastBusData[i].longitude),
             map: map,
             icon: pinIcon
         }));
+        busMarkers[i].content = 'Bus: ' + LastBusData[i].id;
+
+        busMarkers[i].addListener('click', function () {
+            infoWindow.setContent(this.content);
+            infoWindow.open(map, this);
+        });
     }
 
-    var n = 1;
-    var myInterval = setInterval(function () {
-        if(n>=50) {
-            breakInterval(myInterval);
-            for(var i = 0; i < markers.length; i++)
-                markers[i].setMap(null)
-            CalculateActualBusPositions();
-            deployBuses();
-        }
-        for(var i = 0; i<markers.length;i++)
-            markers[i].setPosition(busPositions[i][n].position)
-        n++;
-    },10)
-}
+    var tmplong;
+    var tmplat;
 
-function breakInterval(interval){
-    clearInterval(interval);
+    myInterval = setInterval(function () {
+
+        for(var i = 0;i<LastBusData.length; i++) {
+            if (!hide) {
+                if (busToDisplay.indexOf(parseInt(LastBusData[i].id)) !== -1) {
+                    tmplong = counter * ((LastBusData[i].longitude - CurrentBusData[i].longitude) / 500) + parseFloat(CurrentBusData[i].longitude);
+                    tmplat = counter * ((LastBusData[i].latitude - CurrentBusData[i].latitude) / 500) + parseFloat(CurrentBusData[i].latitude);
+                    busMarkers[i].setPosition(new google.maps.LatLng(tmplat, tmplong));
+                }
+                else {
+                    busMarkers[i].setPosition(null);
+                }
+            }
+            else {
+                busMarkers[i].setPosition(null);
+            }
+        }
+        counter++;
+    },9)
+
 }
 
 function setMapOnAll(map) {
-    for (var i = 0; i < markers.length; i++) {
-        markers[i].setMap(map);
+    for (var i = 0; i < stopMarkers.length; i++) {
+        stopMarkers[i].setMap(map);
     }
 }
 
-// Removes the markers from the map, but keeps them in the array.
+// Removes the stopMarkers from the map, but keeps them in the array.
 function clearMarkers() {
     setMapOnAll(null);
 }
 
-// Shows any markers currently in the array.
+// Shows any stopMarkers currently in the array.
 function showMarkers() {
     setMapOnAll(map);
 }
 
-// Deletes all markers in the array by removing references to them.
+// Deletes all stopMarkers in the array by removing references to them.
 function deleteMarkers() {
     clearMarkers();
-    markers = [];
+    stopMarkers = [];
 }
 
 // Page style functions
 $("#mobile-button").on("click", function () {
-    $("#debug_panel").toggle()
-    $("#mobile-button-lines").toggle()
-    $("#mobile-button-close-panel").toggle()
-})
+    $("#debug_panel").toggle();
+    $("#mobile-button-lines").toggle();
+    $("#mobile-button-close-panel").toggle();
+});
