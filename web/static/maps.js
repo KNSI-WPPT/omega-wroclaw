@@ -1,14 +1,20 @@
 var map;
 var stopMarkers = [];
+//array of all busMarkers
 var busMarkers = [];
 var wroclawCoords = new google.maps.LatLng(51.110679, 17.036151);
+//array of buses to display on screen
 var busToDisplay = [100,103];
+//last data from server
 var LastBusData = [];
+//present data from server
 var CurrentBusData = [];
 var socket = io('http://localhost:5000');
+//multiplier for bus bosition
 var counter=0;
-var myInterval;
+//display/hide all buses
 var hide = false;
+//waiting for second pack of data to start
 var start = false;
 function initialize() {
     var mapOptions = {
@@ -35,10 +41,8 @@ $(document).ready(function () {
     jQuery("#100").click(function () {
         if(busToDisplay.indexOf(parseInt(this.id))===-1) {
             busToDisplay.push(parseInt(this.id));
-            console.log("bus number 100 added");
         }
         else {
-            console.log("bus number 100 removed");
             busToDisplay.splice(busToDisplay.indexOf(parseInt(this.id)),1);
         }
     });
@@ -46,10 +50,8 @@ $(document).ready(function () {
     jQuery("#103").click(function () {
         if(busToDisplay.indexOf(parseInt(this.id))===-1) {
             busToDisplay.push(parseInt(this.id));
-            console.log("bus number 103 added");
         }
         else {
-            console.log("bus number 103 removed");
             busToDisplay.splice(busToDisplay.indexOf(parseInt(this.id)),1);
         }
     });
@@ -136,7 +138,7 @@ socket.on('disconnect',function () {
 socket.on('serial data',function (data) {
     JSONtoArray(data.bus_location_data);
 });
-
+//Convert JSON to array, bus data must be always in the same order
 function JSONtoArray(data) {
     counter=0;
     CurrentBusData = LastBusData.slice(0);
@@ -149,7 +151,7 @@ function JSONtoArray(data) {
         start=true;
     }
 }
-
+//Starts calculating bus route, starts only once
 function init() {
 
     var infoWindow = new google.maps.InfoWindow();
@@ -178,7 +180,7 @@ function init() {
     var tmplong;
     var tmplat;
 
-    myInterval = setInterval(function () {
+    var myInterval = setInterval(function () {
 
         for(var i = 0;i<LastBusData.length; i++) {
             if (!hide) {
